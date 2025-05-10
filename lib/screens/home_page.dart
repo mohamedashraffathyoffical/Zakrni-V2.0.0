@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import '../models/prayer_time.dart';
 import '../services/prayer_api_service.dart';
+import '../services/prayer_notification_service.dart';
 import '../widgets/prayer_card.dart';
 import '../widgets/governorate_dropdown.dart';
 import '../theme/app_theme.dart';
@@ -23,6 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final PrayerApiService _apiService = PrayerApiService();
+  final PrayerNotificationService _notificationService = PrayerNotificationService();
   String _selectedGovernorate = 'القاهرة'; // Default to Cairo in Arabic
   DailyPrayers? _prayerTimes;
   PrayerTime? _nextPrayer;
@@ -30,17 +32,115 @@ class _HomePageState extends State<HomePage> {
   Timer? _timer;
   bool _isLoading = true;
   Locale? _previousLocale;
+  bool _notificationsEnabled = false;
+  String? _currentTimezone;
+  StreamSubscription<bool>? _notificationSettingsSubscription;
   
   @override
   void initState() {
     super.initState();
+    _loadPreferences();
+    _currentTimezone = DateTime.now().timeZoneName;
+    
+    // Listen to notification settings changes from other screens
+    _notificationSettingsSubscription = _notificationService.notificationSettingsStream.listen((enabled) {
+      if (mounted && enabled != _notificationsEnabled) {
+        setState(() {
+          _notificationsEnabled = enabled;
+        });
+        print('Home Page: Notification setting updated from stream: $enabled');
+      }
+    });
+    
+    // Debug log for initialization
+    print('HomePage initialized with default governorate: $_selectedGovernorate');
+  }
+  
+  Future<void> _loadPreferences() async {
+    await _loadNotificationPreference();
+    await _loadSelectedGovernorate();
     _fetchPrayerTimes();
+  }
+  
+  Future<void> _loadNotificationPreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _notificationsEnabled = prefs.getBool('notifications_enabled') ?? false;
+    });
+  }
+  
+  Future<void> _loadSelectedGovernorate() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedGovernorate = prefs.getString('selected_governorate');
+      
+      // Debug log for loading governorate
+      print('Loading saved governorate: $savedGovernorate');
+      
+      if (savedGovernorate != null && savedGovernorate.isNotEmpty) {
+        setState(() {
+          _selectedGovernorate = savedGovernorate;
+        });
+        print('Governorate set to: $_selectedGovernorate');
+      } else {
+        print('No saved governorate found, using default: $_selectedGovernorate');
+      }
+    } catch (e) {
+      print('Error loading governorate: $e');
+    }
+  }
+  
+  Future<void> _saveSelectedGovernorate(String governorate) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selected_governorate', governorate);
+      
+      // Verify the save operation
+      final savedValue = prefs.getString('selected_governorate');
+      print('Saved governorate: $governorate, Verification: $savedValue');
+      
+      // Force a commit on Android
+      if (prefs is SharedPreferences) {
+        await prefs.commit();
+      }
+    } catch (e) {
+      print('Error saving governorate: $e');
+    }
+  }
+  
+  Future<void> _saveNotificationPreference(bool value) async {
+    // Use the notification service to update the setting
+    // This will also update the stream and notify other screens
+    await _notificationService.setNotificationsEnabled(value);
+    setState(() {
+      _notificationsEnabled = value;
+    });
   }
   
   @override
   void dispose() {
     _timer?.cancel();
+    _notificationSettingsSubscription?.cancel();
     super.dispose();
+  }
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkTimezoneChange();
+  }
+  
+  void _checkTimezoneChange() {
+    final newTimezone = DateTime.now().timeZoneName;
+    
+    if (_currentTimezone != null && _currentTimezone != newTimezone) {
+      // Timezone has changed, reschedule notifications
+      if (_notificationsEnabled && _prayerTimes != null && mounted) {
+        _notificationService.handleTimezoneChange(_prayerTimes!, context);
+      }
+      
+      _currentTimezone = newTimezone;
+    }
   }
   
   Future<void> _fetchPrayerTimes() async {
@@ -59,6 +159,11 @@ class _HomePageState extends State<HomePage> {
       
       // Start timer to update countdown
       _startCountdownTimer();
+      
+      // Schedule notifications if enabled
+      if (_notificationsEnabled && mounted) {
+        await _notificationService.scheduleAllPrayerNotifications(prayerTimes, context);
+      }
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -76,6 +181,9 @@ class _HomePageState extends State<HomePage> {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_prayerTimes == null) return;
+      
+      // Check for timezone changes while timer is running
+      _checkTimezoneChange();
       
       final nextPrayer = _prayerTimes!.getNextPrayer();
       final now = DateTime.now();
@@ -121,11 +229,37 @@ class _HomePageState extends State<HomePage> {
     return input;
   }
   
-  void _onGovernorateChanged(String governorate) {
+  void _onGovernorateChanged(String governorate) async {
+    print('Governorate changed to: $governorate');
+    
+    // First save to SharedPreferences before updating state
+    await _saveSelectedGovernorate(governorate);
+    
     setState(() {
       _selectedGovernorate = governorate;
     });
+    
+    // Double-check that the value was saved correctly
+    final prefs = await SharedPreferences.getInstance();
+    final savedGov = prefs.getString('selected_governorate');
+    print('After change - Saved: $savedGov, Current: $_selectedGovernorate');
+    
     _fetchPrayerTimes();
+  }
+  
+  void _toggleNotifications(bool value) async {
+    await _saveNotificationPreference(value);
+    
+    if (value && _prayerTimes != null && mounted) {
+      // Request permissions and schedule notifications
+      await _notificationService.requestPermissions();
+      await _notificationService.scheduleAllPrayerNotifications(_prayerTimes!, context);
+    } else if (!value) {
+      // Cancel all notifications
+      await _notificationService.cancelAllNotifications();
+    }
+    
+    print('Home Page: Notification setting toggled to: $value');
   }
   
   void _navigateToAzkarPage(Widget page) {
@@ -258,17 +392,29 @@ class _HomePageState extends State<HomePage> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 16),
-                          _buildPrayerTimeRow(context, 'Fajr', _prayerTimes!.fajr, appLocalizations),
-                          const Divider(),
-                          _buildPrayerTimeRow(context, 'Sunrise', _prayerTimes!.sunrise, appLocalizations),
-                          const Divider(),
-                          _buildPrayerTimeRow(context, 'Dhuhr', _prayerTimes!.dhuhr, appLocalizations),
-                          const Divider(),
-                          _buildPrayerTimeRow(context, 'Asr', _prayerTimes!.asr, appLocalizations),
-                          const Divider(),
-                          _buildPrayerTimeRow(context, 'Maghrib', _prayerTimes!.maghrib, appLocalizations),
-                          const Divider(),
-                          _buildPrayerTimeRow(context, 'Isha', _prayerTimes!.isha, appLocalizations),
+                          ..._prayerTimes!.toList().map((prayer) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: _buildPrayerTimeRow(context, prayer.name, prayer, appLocalizations),
+                          )).toList(),
+                          
+                          const SizedBox(height: 16),
+                          
+                          // Notification toggle
+                          SwitchListTile(
+                            title: Text(
+                              isArabic ? 'تفعيل إشعارات الصلاة' : 'Enable Prayer Notifications',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            subtitle: Text(
+                              isArabic 
+                                  ? 'استلام إشعار قبل 5 دقائق من وقت الصلاة' 
+                                  : 'Receive notification 5 minutes before prayer time',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            value: _notificationsEnabled,
+                            onChanged: _toggleNotifications,
+                            activeColor: Theme.of(context).primaryColor,
+                          ),
                         ],
                       ),
                     ),

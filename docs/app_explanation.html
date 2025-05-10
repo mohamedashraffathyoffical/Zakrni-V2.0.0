@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شرح تطبيق مواقيت الصلاة</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            direction: rtl;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2e7d32;
+            text-align: center;
+            border-bottom: 2px solid #2e7d32;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #1565c0;
+            margin-top: 30px;
+            border-bottom: 1px solid #1565c0;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #4527a0;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            display: inline-block;
+        }
+        pre {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            direction: ltr;
+        }
+        .file-section {
+            margin-bottom: 40px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .important {
+            background-color: #fff8e1;
+            border-right: 4px solid #ffc107;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .note {
+            background-color: #e1f5fe;
+            border-right: 4px solid #03a9f4;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>شرح تطبيق مواقيت الصلاة (ذكرني)</h1>
+        
+        <div class="file-section">
+            <h2>1. الملف الرئيسي (main.dart)</h2>
+            <p>هذا هو نقطة البداية للتطبيق حيث يتم تهيئة كل شيء.</p>
+            
+            <h3>الوظائف الرئيسية:</h3>
+            <ul>
+                <li>تهيئة التطبيق وإعدادات الإشعارات</li>
+                <li>إعداد اللغة المستخدمة (العربية أو الإنجليزية)</li>
+                <li>تحديد الصفحة الأولى التي ستظهر للمستخدم (تسجيل الدخول أو الصفحة الرئيسية)</li>
+            </ul>
+            
+            <div class="important">
+                <p><strong>ملاحظة مهمة:</strong> يتم حفظ اللغة المختارة في ذاكرة الجهاز باستخدام <code>SharedPreferences</code> حتى تبقى محفوظة عند إعادة فتح التطبيق.</p>
+            </div>
+            
+            <h3>شرح الكود المهم:</h3>
+            <pre>
+void main() async {
+  // التأكد من تهيئة Flutter
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // تهيئة إعدادات الإشعارات للعمليات الخلفية
+  await _initializeNotifications();
+
+  // الحصول على الإعدادات المحفوظة
+  final prefs = await SharedPreferences.getInstance();
+  final String languageCode = prefs.getString('language_code') ?? 'en';
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AppLanguage(languageCode),
+      child: const MyApp(),
+    ),
+  );
+}
+            </pre>
+            <p>هذا الكود يقوم بتهيئة التطبيق وتحميل إعدادات اللغة المحفوظة سابقاً. إذا لم تكن هناك لغة محفوظة، سيتم استخدام اللغة الإنجليزية كإعداد افتراضي.</p>
+        </div>
+
+        <div class="file-section">
+            <h2>2. نموذج بيانات أوقات الصلاة (models/prayer_time.dart)</h2>
+            <p>هذا الملف يحتوي على تعريف نماذج البيانات المستخدمة لتخزين وإدارة أوقات الصلاة.</p>
+            
+            <h3>المكونات الرئيسية:</h3>
+            <ul>
+                <li>فئة <code>PrayerTime</code> لتمثيل وقت صلاة واحد (مثل الفجر، الظهر، إلخ)</li>
+                <li>فئة <code>DailyPrayers</code> لتمثيل جميع أوقات الصلاة ليوم واحد</li>
+            </ul>
+            
+            <div class="note">
+                <p>هذه النماذج تسمح للتطبيق بالتعامل مع أوقات الصلاة بطريقة منظمة وسهلة.</p>
+            </div>
+        </div>
+
+        <div class="file-section">
+            <h2>3. خدمة واجهة برمجة أوقات الصلاة (services/prayer_api_service.dart)</h2>
+            <p>هذه الخدمة مسؤولة عن جلب أوقات الصلاة من مصدر البيانات.</p>
+            
+            <h3>الوظائف الرئيسية:</h3>
+            <ul>
+                <li>الاتصال بمصدر البيانات للحصول على أوقات الصلاة حسب المحافظة</li>
+                <li>تحويل البيانات المستلمة إلى نماذج <code>PrayerTime</code> و <code>DailyPrayers</code></li>
+                <li>التعامل مع أي أخطاء قد تحدث أثناء جلب البيانات</li>
+            </ul>
+            
+            <div class="important">
+                <p><strong>ملاحظة مهمة:</strong> يتم حفظ المحافظة المختارة باستخدام <code>SharedPreferences</code> لتذكرها عند إعادة فتح التطبيق.</p>
+            </div>
+        </div>
+
+        <div class="file-section">
+            <h2>4. خدمة إشعارات الصلاة (services/prayer_notification_service.dart)</h2>
+            <p>هذه الخدمة تدير إشعارات أوقات الصلاة وتضمن وصولها في الوقت المناسب.</p>
+            
+            <h3>الوظائف الرئيسية:</h3>
+            <ul>
+                <li>جدولة الإشعارات لأوقات الصلاة المختلفة</li>
+                <li>تخصيص محتوى الإشعارات وصوتها</li>
+                <li>إدارة إعدادات الإشعارات (تفعيل/تعطيل)</li>
+                <li>إرسال إشعار تجريبي للتحقق من عمل الإشعارات</li>
+            </ul>
+            
+            <h3>شرح الكود المهم:</h3>
+            <pre>
+Future<void> schedulePrayerNotification(PrayerTime prayer, BuildContext context) async {
+  if (!_notificationsEnabled) {
+    print('Notifications are disabled, not scheduling');
+    return;
+  }
+  
+  // حساب وقت الإشعار (قبل وقت الصلاة بـ 5 دقائق)
+  final scheduledTime = prayer.time.subtract(const Duration(minutes: 5));
+  
+  // إذا كان الوقت في الماضي، لا داعي لجدولة الإشعار
+  if (scheduledTime.isBefore(DateTime.now())) {
+    print('Prayer time ${prayer.name} is in the past, not scheduling notification');
+    return;
+  }
+  
+  // جدولة الإشعار
+  // ...
+}
+            </pre>
+            <p>هذا الكود يقوم بجدولة إشعار لوقت صلاة محدد. يتم إرسال الإشعار قبل وقت الصلاة بـ 5 دقائق، وفقط إذا كان هذا الوقت في المستقبل وليس في الماضي.</p>
+            
+            <div class="note">
+                <p>الإشعارات تعمل حتى عندما يكون التطبيق مغلقاً، وذلك بفضل استخدام <code>flutter_local_notifications</code>.</p>
+            </div>
+        </div>
+
+        <div class="file-section">
+            <h2>5. خدمة الأذان (services/adhan_service.dart)</h2>
+            <p>هذه الخدمة مسؤولة عن تشغيل الأذان في أوقات الصلاة.</p>
+            
+            <h3>الوظائف الرئيسية:</h3>
+            <ul>
+                <li>تشغيل الأذان في وقت الصلاة</li>
+                <li>إدارة أنواع الأذان المختلفة (مكة، المدينة، الشيخ السديس)</li>
+                <li>تفعيل أو تعطيل تشغيل الأذان</li>
+                <li>إيقاف الأذان عند الضغط على زر الإيقاف في الإشعار</li>
+            </ul>
+            
+            <h3>شرح الكود المهم:</h3>
+            <pre>
+Future<void> playAdhan() async {
+  if (_selectedAdhan == 'none' || !_adhanEnabled) {
+    print('Adhan is set to none or disabled, not playing');
+    return;
+  }
+  
+  final adhanFile = _adhanFiles[_selectedAdhan];
+  if (adhanFile != null) {
+    try {
+      // إيقاف أي صوت يعمل حالياً
+      await _audioPlayer.stop();
+      
+      // ضبط مستوى الصوت على الأقصى
+      await _audioPlayer.setVolume(1.0);
+      
+      // عرض إشعار للأذان
+      await _showAdhanNotification();
+      
+      print('Playing adhan: $adhanFile');
+      await _audioPlayer.play(AssetSource(adhanFile));
+      
+    } catch (e) {
+      print('Error playing adhan: $e');
+    }
+  }
+}
+            </pre>
+            <p>هذا الكود يقوم بتشغيل الأذان المختار إذا كان مفعلاً. يتم أيضاً عرض إشعار يسمح للمستخدم بإيقاف الأذان.</p>
+            
+            <div class="important">
+                <p><strong>ملاحظة مهمة:</strong> يعمل الأذان حتى عندما يكون التطبيق مغلقاً، وذلك بفضل جدولة الأذان مسبقاً.</p>
+            </div>
+        </div>
+
+        <div class="file-section">
+            <h2>6. الصفحة الرئيسية (screens/home_page.dart)</h2>
+            <p>هذه هي الصفحة الرئيسية للتطبيق التي تعرض أوقات الصلاة والعد التنازلي للصلاة القادمة.</p>
+            
+            <h3>المكونات الرئيسية:</h3>
+            <ul>
+                <li>عرض أوقات الصلاة لليوم الحالي</li>
+                <li>عرض العد التنازلي للصلاة القادمة</li>
+                <li>اختيار المحافظة</li>
+                <li>زر لتفعيل/تعطيل الإشعارات</li>
+                <li>أزرار للوصول إلى صفحات الأذكار المختلفة</li>
+            </ul>
+            
+            <h3>شرح الكود المهم:</h3>
+            <pre>
+void _toggleNotifications(bool value) async {
+  await _saveNotificationPreference(value);
+  
+  if (value && _prayerTimes != null && mounted) {
+    // طلب الأذونات وجدولة الإشعارات
+    await _notificationService.requestPermissions();
+    await _notificationService.scheduleAllPrayerNotifications(_prayerTimes!, context);
+  } else if (!value) {
+    // إلغاء جميع الإشعارات
+    await _notificationService.cancelAllNotifications();
+  }
+  
+  print('Home Page: Notification setting toggled to: $value');
+}
+            </pre>
+            <p>هذا الكود يتعامل مع تفعيل أو تعطيل إشعارات الصلاة. عند التفعيل، يتم جدولة إشعارات لجميع أوقات الصلاة، وعند التعطيل يتم إلغاء جميع الإشعارات.</p>
+            
+            <div class="note">
+                <p>تم تنفيذ تزامن بين زر الإشعارات في الصفحة الرئيسية وزر الإشعارات في صفحة الإعدادات، بحيث عند تغيير أحدهما يتغير الآخر تلقائياً.</p>
+            </div>
+        </div>
+
+        <div class="file-section">
+            <h2>7. صفحة الإعدادات (screens/settings_page.dart)</h2>
+            <p>هذه الصفحة تسمح للمستخدم بتخصيص إعدادات التطبيق.</p>
+            
+            <h3>الإعدادات المتاحة:</h3>
+            <ul>
+                <li>تفعيل/تعطيل إشعارات الصلاة</li>
+                <li>اختيار نوع الأذان</li>
+                <li>تفعيل/تعطيل الأذان</li>
+                <li>تغيير لغة التطبيق</li>
+                <li>إعادة ضبط عدادات الأذكار</li>
+            </ul>
+            
+            <h3>شرح الكود المهم:</h3>
+            <pre>
+Switch(
+  value: _notificationsEnabled,
+  activeColor: AppTheme.primaryGradientStart,
+  onChanged: (value) async {
+    await _notificationService.setNotificationsEnabled(value);
+    setState(() {
+      _notificationsEnabled = value;
+    });
+    
+    print('Settings Page: Notification setting toggled to: $value');
+
+    // عرض رسالة تأكيد التغيير
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            value
+                ? (isArabic ? 'تم تفعيل الإشعارات' : 'Notifications enabled')
+                : (isArabic ? 'تم تعطيل الإشعارات' : 'Notifications disabled'),
+          ),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  },
+)
+            </pre>
+            <p>هذا الكود يتعامل مع زر تفعيل/تعطيل الإشعارات في صفحة الإعدادات. عند تغيير الحالة، يتم حفظ الإعداد الجديد وعرض رسالة تأكيد للمستخدم.</p>
+            
+            <div class="important">
+                <p><strong>ملاحظة مهمة:</strong> تم ربط هذا الزر مع زر الإشعارات في الصفحة الرئيسية بحيث يتم تحديث كلاهما عند تغيير أحدهما.</p>
+            </div>
+        </div>
+
+        <div class="file-section">
+            <h2>8. قائمة المحافظات (widgets/governorate_dropdown.dart)</h2>
+            <p>هذه القائمة المنسدلة تسمح للمستخدم باختيار المحافظة لعرض أوقات الصلاة الخاصة بها.</p>
+            
+            <h3>الوظائف الرئيسية:</h3>
+            <ul>
+                <li>عرض قائمة بالمحافظات المتاحة</li>
+                <li>السماح للمستخدم باختيار محافظة</li>
+                <li>حفظ المحافظة المختارة لاستخدامها عند إعادة فتح التطبيق</li>
+            </ul>
+            
+            <div class="important">
+                <p><strong>ملاحظة مهمة:</strong> تم إصلاح مشكلة عدم حفظ المحافظة المختارة عند إغلاق التطبيق وإعادة فتحه. الآن يتذكر التطبيق المحافظة المختارة حتى بعد إغلاقه.</p>
+            </div>
+        </div>
+
+        <div class="file-section">
+            <h2>9. التعريب والترجمة (l10n/app_localizations.dart)</h2>
+            <p>هذا الملف يدير ترجمة نصوص التطبيق بين اللغتين العربية والإنجليزية.</p>
+            
+            <h3>الوظائف الرئيسية:</h3>
+            <ul>
+                <li>توفير الترجمات لجميع النصوص في التطبيق</li>
+                <li>تغيير اللغة بناءً على اختيار المستخدم</li>
+                <li>حفظ إعداد اللغة المفضلة</li>
+            </ul>
+            
+            <div class="note">
+                <p>يدعم التطبيق اللغتين العربية والإنجليزية بشكل كامل، ويتم تغيير اتجاه واجهة المستخدم تلقائياً حسب اللغة المختارة.</p>
+            </div>
+        </div>
+
+        <div class="file-section">
+            <h2>10. سمات التطبيق (theme/app_theme.dart)</h2>
+            <p>هذا الملف يحدد المظهر العام للتطبيق من ألوان وخطوط وأنماط.</p>
+            
+            <h3>العناصر الرئيسية:</h3>
+            <ul>
+                <li>تحديد ألوان التطبيق الرئيسية</li>
+                <li>تعريف أنماط النصوص المختلفة</li>
+                <li>إنشاء تدرجات لونية للأزرار والبطاقات</li>
+            </ul>
+            
+            <h3>شرح الكود المهم:</h3>
+            <pre>
+static ThemeData themeData() {
+  return ThemeData(
+    primaryColor: primaryColor,
+    colorScheme: ColorScheme.light(
+      primary: primaryColor,
+      secondary: accentColor,
+    ),
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryGradientStart,
+      elevation: 0,
+    ),
+    // المزيد من تعريفات السمات...
+  );
+}
+            </pre>
+            <p>هذا الكود يحدد السمة الرئيسية للتطبيق، بما في ذلك الألوان والأنماط المختلفة للعناصر المرئية.</p>
+        </div>
+
+        <div class="file-section">
+            <h2>ملخص التحديثات الأخيرة</h2>
+            <p>تم إجراء التحديثات التالية على التطبيق:</p>
+            
+            <ol>
+                <li>
+                    <strong>إصلاح مشكلة حفظ المحافظة المختارة:</strong>
+                    <p>تم إصلاح المشكلة التي كانت تؤدي إلى إعادة تعيين المحافظة المختارة إلى القاهرة عند إغلاق التطبيق وإعادة فتحه. الآن يتذكر التطبيق المحافظة المختارة حتى بعد إغلاقه.</p>
+                </li>
+                <li>
+                    <strong>تزامن أزرار الإشعارات:</strong>
+                    <p>تم تنفيذ تزامن بين زر تفعيل الإشعارات في الصفحة الرئيسية وزر تفعيل الإشعارات في صفحة الإعدادات. الآن عند تفعيل أو تعطيل أحدهما، يتم تحديث الآخر تلقائياً.</p>
+                </li>
+            </ol>
+            
+            <div class="important">
+                <p><strong>ملاحظة مهمة:</strong> تعمل الإشعارات والأذان حتى عندما يكون التطبيق مغلقاً، ولا يتطلب التطبيق اتصالاً بالإنترنت لعرض أوقات الصلاة بعد تحميلها أول مرة.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

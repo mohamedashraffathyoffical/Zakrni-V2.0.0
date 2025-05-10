@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>توثيق تطبيق ذكرني (Zakrni)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+            direction: rtl;
+            text-align: right;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            border-bottom: 1px solid #3498db;
+            padding-bottom: 5px;
+        }
+        code {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+            padding: 2px 4px;
+            direction: ltr;
+            display: block;
+            text-align: left;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 10px;
+            overflow-x: auto;
+        }
+        ul, ol {
+            padding-right: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            pre, code {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>توثيق تطبيق ذكرني (Zakrni) - الإصدار 2.0.0</h1>
+
+        <h2>نظرة عامة على التطبيق</h2>
+        <p>تطبيق ذكرني هو تطبيق إسلامي متكامل يوفر مواقيت الصلاة والأذكار للمستخدمين. يتميز التطبيق بواجهة مستخدم سهلة الاستخدام وميزات متعددة تساعد المسلمين على أداء عباداتهم في الأوقات المحددة.</p>
+
+        <h2>الحزم والمكتبات المستخدمة</h2>
+        <p>تم استخدام العديد من المكتبات والحزم لتطوير هذا التطبيق، ومن أهمها:</p>
+        <ol>
+            <li><strong>flutter_localizations</strong>: لدعم التعريب واللغات المتعددة (العربية والإنجليزية)</li>
+            <li><strong>http (1.1.0)</strong>: للاتصال بواجهة برمجة التطبيقات (API) للحصول على مواقيت الصلاة</li>
+            <li><strong>provider (6.0.5)</strong>: لإدارة حالة التطبيق وتوفير نمط إدارة الحالة</li>
+            <li><strong>shared_preferences (2.2.0)</strong>: لتخزين تفضيلات المستخدم محلياً مثل المحافظة المختارة وإعدادات الإشعارات</li>
+            <li><strong>url_launcher (^6.2.5)</strong>: لفتح روابط خارجية من داخل التطبيق</li>
+            <li><strong>package_info_plus (^5.0.1)</strong>: للحصول على معلومات حول إصدار التطبيق</li>
+            <li><strong>flutter_local_notifications (^14.0.0+1)</strong>: لإدارة وعرض الإشعارات المحلية للصلوات</li>
+            <li><strong>timezone (^0.9.2)</strong>: للتعامل مع المناطق الزمنية المختلفة</li>
+            <li><strong>audioplayers (^5.2.1)</strong>: لتشغيل صوت الأذان عند وقت الصلاة</li>
+        </ol>
+
+        <h2>الميزات الرئيسية للتطبيق</h2>
+
+        <h3>1. عرض مواقيت الصلاة</h3>
+        <ul>
+            <li>عرض مواقيت الصلاة اليومية (الفجر، الشروق، الظهر، العصر، المغرب، العشاء)</li>
+            <li>عرض العد التنازلي للصلاة القادمة</li>
+            <li>دعم لمختلف محافظات مصر مع حفظ المحافظة المختارة بين جلسات التطبيق</li>
+        </ul>
+
+        <h3>2. نظام الإشعارات</h3>
+        <ul>
+            <li>إشعارات قبل وقت الصلاة بـ 5 دقائق</li>
+            <li>تشغيل الأذان عند وقت الصلاة (اختياري)</li>
+            <li>إمكانية اختيار نوع الأذان (السديس، مكة، المدينة)</li>
+            <li>إشعار مستمر عند تشغيل الأذان مع زر لإيقافه</li>
+        </ul>
+
+        <h3>3. الأذكار</h3>
+        <ul>
+            <li>أذكار الصباح</li>
+            <li>أذكار المساء</li>
+            <li>أذكار النوم</li>
+            <li>أذكار الاستيقاظ</li>
+            <li>أذكار بعد الصلاة</li>
+        </ul>
+
+        <h3>4. إعدادات متنوعة</h3>
+        <ul>
+            <li>إمكانية تغيير اللغة (العربية والإنجليزية)</li>
+            <li>خيارات إعادة ضبط التطبيق (إعادة ضبط شاملة وإعادة ضبط فردية)</li>
+            <li>اختبار الإشعارات للتأكد من عملها بشكل صحيح</li>
+        </ul>
+
+        <h2>شرح للوظائف والملفات الرئيسية</h2>
+
+        <h3>1. نموذج وقت الصلاة (prayer_time.dart)</h3>
+        <p>يحتوي هذا الملف على تعريف فئات <code>PrayerTime</code> و <code>DailyPrayers</code> التي تمثل بيانات أوقات الصلاة:</p>
+        <pre><code>class PrayerTime {
+  final String name;
+  final DateTime time;
+
+  PrayerTime({required this.name, required this.time});
+  
+  // تحويل البيانات من JSON إلى كائن PrayerTime
+  factory PrayerTime.fromJson(Map&lt;String, dynamic&gt; json, String name) {
+    // ...
+  }
+}
+
+class DailyPrayers {
+  final PrayerTime fajr;
+  final PrayerTime sunrise;
+  final PrayerTime dhuhr;
+  final PrayerTime asr;
+  final PrayerTime maghrib;
+  final PrayerTime isha;
+  final DateTime date;
+  
+  // ...
+  
+  // الحصول على الصلاة التالية
+  PrayerTime getNextPrayer() {
+    final now = DateTime.now();
+    final prayers = toList();
+    
+    for (var prayer in prayers) {
+      if (prayer.time.isAfter(now)) {
+        return prayer;
+      }
+    }
+    
+    // إذا انتهت جميع صلوات اليوم، أعد صلاة الفجر للغد
+    // ...
+  }
+}</code></pre>
+
+        <h3>2. خدمة واجهة برمجة التطبيقات للصلاة (prayer_api_service.dart)</h3>
+        <p>تستخدم هذه الخدمة واجهة برمجة التطبيقات Al-Adhan للحصول على مواقيت الصلاة:</p>
+        <pre><code>class PrayerApiService {
+  // استخدام واجهة برمجة تطبيقات Al-Adhan لمواقيت الصلاة
+  static const String baseUrl = 'https://api.aladhan.com/v1/timingsByCity';
+  
+  // خريطة محافظات مصر مع إحداثياتها
+  static final Map&lt;String, Map&lt;String, dynamic&gt;&gt; egyptGovernorates = {
+    'القاهرة': {'city': 'Cairo', 'country': 'Egypt'},
+    'الإسكندرية': {'city': 'Alexandria', 'country': 'Egypt'},
+    // ...
+  };
+  
+  // الحصول على مواقيت الصلاة لمحافظة محددة
+  Future&lt;DailyPrayers&gt; getPrayerTimes(String governorate) async {
+    // ...
+  }
+}</code></pre>
+
+        <h3>3. خدمة الأذان (adhan_service.dart)</h3>
+        <p>تدير هذه الخدمة تشغيل الأذان وإعداداته:</p>
+        <pre><code>class AdhanService {
+  // الأذانات المتاحة
+  static const List&lt;String&gt; availableAdhans = [
+    'none',
+    'sudais',
+    'makkah',
+    'madinah',
+  ];
+  
+  // تشغيل الأذان
+  Future&lt;void&gt; playAdhan() async {
+    if (_selectedAdhan == 'none' || !_adhanEnabled) {
+      return;
+    }
+    
+    // عرض إشعار للأذان
+    await _showAdhanNotification();
+    
+    // تشغيل ملف الصوت
+    await _audioPlayer.play(AssetSource(adhanFile));
+  }
+  
+  // عرض إشعار مع زر إيقاف عند تشغيل الأذان
+  Future&lt;void&gt; _showAdhanNotification() async {
+    // ...
+  }
+}</code></pre>
+
+        <h3>4. خدمة إشعارات الصلاة (prayer_notification_service.dart)</h3>
+        <p>تدير هذه الخدمة جدولة وعرض إشعارات الصلاة:</p>
+        <pre><code>class PrayerNotificationService {
+  // جدولة إشعارات لجميع الصلوات
+  Future&lt;void&gt; scheduleAllPrayerNotifications(DailyPrayers prayers, BuildContext context) async {
+    // ...
+  }
+  
+  // جدولة إشعار لصلاة محددة
+  Future&lt;void&gt; schedulePrayerNotification(PrayerTime prayer, BuildContext context) async {
+    // ...
+  }
+  
+  // عرض إشعار اختباري
+  Future&lt;bool&gt; showTestNotification(BuildContext context) async {
+    // ...
+  }
+}</code></pre>
+
+        <h3>5. الصفحة الرئيسية (home_page.dart)</h3>
+        <p>تعرض هذه الصفحة مواقيت الصلاة والعد التنازلي للصلاة القادمة:</p>
+        <pre><code>class _HomePageState extends State&lt;HomePage&gt; {
+  // ...
+  
+  // جلب مواقيت الصلاة
+  Future&lt;void&gt; _fetchPrayerTimes() async {
+    // ...
+  }
+  
+  // بدء مؤقت العد التنازلي
+  void _startCountdownTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // ...
+      
+      // تنسيق الوقت المتبقي
+      final hours = difference.inHours;
+      final minutes = difference.inMinutes.remainder(60);
+      final seconds = difference.inSeconds.remainder(60);
+      
+      // تنسيق الوقت بشكل مختلف بناءً على اللغة
+      if (isArabic) {
+        // تنسيق عربي مع أرقام عربية وثواني
+        final arabicHours = _convertToArabicNumerals(hours.toString());
+        final arabicMinutes = _convertToArabicNumerals(minutes.toString().padLeft(2, '0'));
+        final arabicSeconds = _convertToArabicNumerals(seconds.toString().padLeft(2, '0'));
+        _timeRemaining = '$arabicHours:$arabicMinutes:$arabicSeconds';
+      } else {
+        // تنسيق إنجليزي مع ثواني
+        _timeRemaining = '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      }
+    });
+  }
+  
+  // تحويل الأرقام إلى أرقام عربية
+  String _convertToArabicNumerals(String input) {
+    // ...
+  }
+}</code></pre>
+
+        <h3>6. صفحة الإعدادات (settings_page.dart)</h3>
+        <p>تتيح هذه الصفحة للمستخدم تخصيص إعدادات التطبيق:</p>
+        <pre><code>class _SettingsPageState extends State&lt;SettingsPage&gt; {
+  // ...
+  
+  // تحميل الإعدادات
+  Future&lt;void&gt; _loadSettings() async {
+    // ...
+  }
+  
+  // حفظ إعدادات الإشعارات
+  Future&lt;void&gt; _saveNotificationSettings(bool value) async {
+    // ...
+  }
+  
+  // حفظ إعدادات الأذان
+  Future&lt;void&gt; _saveAdhanSettings(String adhan) async {
+    // ...
+  }
+  
+  // إعادة ضبط التطبيق
+  Future&lt;void&gt; _resetApp() async {
+    // ...
+  }
+}</code></pre>
+
+        <h2>كيفية تنفيذ العد التنازلي للصلاة</h2>
+        <p>تم تنفيذ العد التنازلي للصلاة باستخدام الخطوات التالية:</p>
+        <ol>
+            <li><strong>تحديد الصلاة القادمة</strong>: يتم استخدام الدالة <code>getNextPrayer()</code> في فئة <code>DailyPrayers</code> لتحديد الصلاة القادمة بناءً على الوقت الحالي.</li>
+            <li><strong>حساب الوقت المتبقي</strong>: يتم حساب الفرق بين وقت الصلاة القادمة والوقت الحالي باستخدام <code>nextPrayer.time.difference(now)</code>.</li>
+            <li><strong>تحديث العد التنازلي</strong>: يتم استخدام <code>Timer.periodic</code> لتحديث العد التنازلي كل ثانية.</li>
+            <li><strong>تنسيق العرض</strong>: يتم تنسيق الوقت المتبقي بتنسيق مناسب (ساعات:دقائق:ثواني) ويتم تحويل الأرقام إلى أرقام عربية إذا كانت اللغة المختارة هي العربية.</li>
+        </ol>
+
+        <h2>كيفية تنفيذ نظام الإشعارات</h2>
+        <p>تم تنفيذ نظام الإشعارات باستخدام الخطوات التالية:</p>
+        <ol>
+            <li><strong>تهيئة نظام الإشعارات</strong>: يتم تهيئة <code>FlutterLocalNotificationsPlugin</code> في بداية التطبيق.</li>
+            <li><strong>جدولة الإشعارات</strong>: يتم جدولة إشعارات لكل صلاة قبل وقتها بـ 5 دقائق.</li>
+            <li><strong>إشعارات الأذان</strong>: عند تشغيل الأذان، يتم عرض إشعار مستمر مع زر لإيقاف الأذان.</li>
+            <li><strong>اختبار الإشعارات</strong>: تم إضافة زر لاختبار الإشعارات للتأكد من عملها بشكل صحيح.</li>
+        </ol>
+
+        <h2>الخاتمة</h2>
+        <p>تطبيق ذكرني هو تطبيق شامل يوفر مجموعة متكاملة من الميزات للمسلمين لمساعدتهم على أداء عباداتهم في الأوقات المحددة. يتميز التطبيق بواجهة مستخدم سهلة الاستخدام ودعم للغتين العربية والإنجليزية، مما يجعله مناسبًا لمجموعة واسعة من المستخدمين.</p>
+        <p>تم تطوير التطبيق باستخدام إطار عمل Flutter، مما يسمح بتشغيله على أنظمة Android و iOS. كما تم استخدام مجموعة من المكتبات والحزم لتوفير تجربة مستخدم سلسة وفعالة.</p>
+    </div>
+</body>
+</html>
