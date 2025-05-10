@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>توثيق تطبيق "Zakrni – ذكرني"</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #3498db;
+        }
+        code {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+            padding: 2px 4px;
+            font-size: 90%;
+        }
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 10px;
+            overflow-x: auto;
+        }
+        pre code {
+            border: none;
+            padding: 0;
+        }
+        .highlight {
+            background-color: #ffffcc;
+            padding: 2px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: right;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        @media print {
+            body {
+                font-size: 12pt;
+            }
+            pre, code {
+                font-size: 10pt;
+            }
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+            @page {
+                margin: 2cm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>توثيق تطبيق "Zakrni – ذكرني"</h1>
+
+    <h2>نظرة عامة</h2>
+    <p>"Zakrni – ذكرني" هو تطبيق إسلامي يساعد المسلمين على معرفة أوقات الصلاة في مختلف محافظات مصر، كما يوفر مجموعة شاملة من الأذكار اليومية مثل أذكار الصباح والمساء وأذكار ما بعد الصلاة وأذكار النوم والاستيقاظ.</p>
+
+    <h2>بنية المشروع</h2>
+
+    <h3>المجلدات الرئيسية</h3>
+    <ul>
+        <li><strong>android/</strong>: يحتوي على ملفات مشروع Android</li>
+        <li><strong>ios/</strong>: يحتوي على ملفات مشروع iOS</li>
+        <li><strong>web/</strong>: يحتوي على ملفات الويب للتطبيق</li>
+        <li><strong>lib/</strong>: يحتوي على كود المصدر الرئيسي للتطبيق</li>
+        <li><strong>assets/</strong>: يحتوي على الموارد الثابتة مثل الصور والخطوط</li>
+        <li><strong>test/</strong>: يحتوي على اختبارات التطبيق</li>
+        <li><strong>build/</strong>: يحتوي على ملفات البناء المؤقتة (يتم إنشاؤه تلقائيًا)</li>
+    </ul>
+
+    <h3>هيكل مجلد lib</h3>
+    <p>مجلد <code>lib</code> هو المجلد الرئيسي الذي يحتوي على كود المصدر للتطبيق، وينقسم إلى المجلدات التالية:</p>
+    <ul>
+        <li><strong>l10n/</strong>: يحتوي على ملفات الترجمة والتعريب</li>
+        <li><strong>models/</strong>: يحتوي على نماذج البيانات المستخدمة في التطبيق</li>
+        <li><strong>screens/</strong>: يحتوي على شاشات التطبيق المختلفة</li>
+        <li><strong>services/</strong>: يحتوي على الخدمات المختلفة مثل خدمات API وخدمات التخزين</li>
+        <li><strong>theme/</strong>: يحتوي على تعريفات السمات والألوان للتطبيق</li>
+        <li><strong>widgets/</strong>: يحتوي على الويدجت المخصصة المستخدمة في التطبيق</li>
+    </ul>
+
+    <h3>هيكل مجلد screens</h3>
+    <p>مجلد <code>screens</code> يحتوي على شاشات التطبيق المختلفة، وينقسم إلى:</p>
+    <ul>
+        <li><strong>auth/</strong>: شاشات المصادقة (إن وجدت)</li>
+        <li><strong>azkar/</strong>: شاشات الأذكار المختلفة</li>
+        <li><strong>legal/</strong>: الشاشات القانونية مثل سياسة الخصوصية</li>
+    </ul>
+
+    <h2>الملفات الرئيسية</h2>
+
+    <h3>main.dart</h3>
+    <p>نقطة الدخول الرئيسية للتطبيق. يقوم بتهيئة التطبيق وإعداد مزود اللغة وتشغيل التطبيق الرئيسي.</p>
+    <pre><code>void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final String languageCode = prefs.getString('language_code') ?? 'en';
+  
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AppLanguage(languageCode),
+      child: const MyApp(),
+    ),
+  );
+}</code></pre>
+
+    <h3>settings_page.dart</h3>
+    <p>يحتوي على شاشة الإعدادات التي تسمح للمستخدم بتغيير لغة التطبيق وإعدادات أزرار إعادة تعيين العدادات.</p>
+
+    <h3>package_info_plus_web_shim.dart</h3>
+    <p>يوفر واجهة متوافقة مع الويب لحزمة package_info_plus.</p>
+
+    <h3>أذكار الصباح والمساء</h3>
+    <p>تطبيق "Zakrni – ذكرني" يحتوي على مجموعة شاملة من الأذكار:</p>
+
+    <ol>
+        <li>
+            <strong>أذكار الصباح (morning_azkar.dart)</strong>:
+            <ul>
+                <li>مجموعة من 30 ذكر صباحي أصيل باللغتين العربية والإنجليزية</li>
+                <li>كل ذكر يحتوي على النص العربي والنطق والترجمة الإنجليزية وعدد التكرار</li>
+            </ul>
+        </li>
+        <li>
+            <strong>أذكار المساء (evening_azkar.dart)</strong>:
+            <ul>
+                <li>مجموعة من 30 ذكر مسائي أصيل باللغتين العربية والإنجليزية</li>
+                <li>تشمل أذكار الحماية من الشر والمخاوف أثناء الليل والاستعاذة من عذاب القبر</li>
+            </ul>
+        </li>
+        <li>
+            <strong>أذكار ما بعد الصلاة (after_prayer_azkar.dart)</strong>:
+            <ul>
+                <li>أذكار تقال بعد الصلوات المفروضة</li>
+                <li>تشمل التسبيح والتحميد والتكبير وأذكار أخرى</li>
+            </ul>
+        </li>
+        <li>
+            <strong>أذكار النوم (sleep_azkar.dart)</strong>:
+            <ul>
+                <li>أذكار تقال قبل النوم للحماية والبركة</li>
+                <li>تشمل آية الكرسي والمعوذات وأدعية النوم</li>
+            </ul>
+        </li>
+        <li>
+            <strong>أذكار الاستيقاظ (waking_azkar.dart)</strong>:
+            <ul>
+                <li>مجموعة من 10 أذكار أصيلة للاستيقاظ باللغتين العربية والإنجليزية</li>
+                <li>تشمل أذكار الاستيقاظ، إعلان الإيمان بعد الاستيقاظ، ارتداء الملابس، دخول الخلاء والخروج منه، الوضوء، الإفطار، الخروج من المنزل، دخول المنزل، والذهاب إلى المسجد</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2>الحزم المستخدمة (Dependencies)</h2>
+
+    <h3>الحزم الأساسية</h3>
+    <ul>
+        <li><strong>flutter</strong>: إطار العمل الأساسي لتطوير التطبيق</li>
+        <li><strong>flutter_localizations</strong>: لدعم التعريب والترجمة</li>
+        <li><strong>intl</strong>: للتنسيق والترجمة</li>
+    </ul>
+
+    <h3>حزم إدارة الحالة والبيانات</h3>
+    <ul>
+        <li><strong>provider (6.0.5)</strong>: لإدارة حالة التطبيق</li>
+        <li><strong>shared_preferences (2.2.0)</strong>: لتخزين البيانات المحلية مثل إعدادات اللغة وحالة العدادات</li>
+    </ul>
+
+    <h3>حزم الواجهة والتفاعل</h3>
+    <ul>
+        <li><strong>cupertino_icons (^1.0.8)</strong>: أيقونات iOS</li>
+        <li><strong>url_launcher (^6.2.5)</strong>: لفتح الروابط الخارجية مثل روابط وسائل التواصل الاجتماعي</li>
+    </ul>
+
+    <h3>حزم أخرى</h3>
+    <ul>
+        <li><strong>http (1.1.0)</strong>: لإجراء طلبات HTTP</li>
+        <li><strong>package_info_plus (^5.0.1)</strong>: للحصول على معلومات حزمة التطبيق</li>
+        <li><strong>flutter_gen (^5.10.0)</strong>: لتوليد الموارد</li>
+    </ul>
+
+    <h2>ميزات التطبيق الرئيسية</h2>
+
+    <h3>1. عرض أوقات الصلاة</h3>
+    <p>يوفر التطبيق أوقات الصلاة لمختلف محافظات مصر.</p>
+
+    <h3>2. الأذكار اليومية</h3>
+    <p>يحتوي التطبيق على مجموعة شاملة من الأذكار اليومية:</p>
+    <ul>
+        <li>أذكار الصباح (30 ذكر)</li>
+        <li>أذكار المساء (30 ذكر)</li>
+        <li>أذكار ما بعد الصلاة</li>
+        <li>أذكار النوم</li>
+        <li>أذكار الاستيقاظ (10 أذكار)</li>
+    </ul>
+
+    <h3>3. عدادات الأذكار</h3>
+    <ul>
+        <li>كل ذكر له عداد لمساعدة المستخدم على تتبع عدد المرات التي قال فيها الذكر</li>
+        <li>يمكن إعادة تعيين العدادات بشكل فردي أو جماعي</li>
+        <li>يمكن تمكين/تعطيل أزرار إعادة التعيين من خلال الإعدادات</li>
+    </ul>
+
+    <h3>4. دعم اللغات المتعددة</h3>
+    <ul>
+        <li>يدعم التطبيق اللغتين العربية والإنجليزية</li>
+        <li>يمكن تغيير لغة التطبيق من خلال الإعدادات</li>
+    </ul>
+
+    <h3>5. الوضع الداكن/الفاتح</h3>
+    <p>يدعم التطبيق الوضع الداكن والفاتح لراحة العين.</p>
+
+    <h2>خدمات التطبيق</h2>
+
+    <h3>ResetCountersService</h3>
+    <p>خدمة تتعامل مع إعادة تعيين عدادات الأذكار وحفظ تفضيلات أزرار إعادة التعيين.</p>
+    <pre><code>// مثال على استخدام خدمة إعادة تعيين العدادات
+Future&lt;void&gt; _loadResetButtonPreferences() async {
+  final showIndividualButtons = await ResetCountersService.getShowIndividualResetButtons();
+  final showGlobalButton = await ResetCountersService.getShowGlobalResetButton();
+  
+  if (mounted) {
+    setState(() {
+      _showIndividualResetButtons = showIndividualButtons;
+      _showGlobalResetButton = showGlobalButton;
+    });
+  }
+}</code></pre>
+
+    <h2>الويدجت المخصصة</h2>
+
+    <h3>DhikrCounterButton</h3>
+    <p>زر عداد مخصص لعد الأذكار، يعرض العدد الحالي والعدد الإجمالي المطلوب.</p>
+
+    <h3>GlobalResetButton</h3>
+    <p>زر لإعادة تعيين جميع عدادات الأذكار في صفحة معينة.</p>
+
+    <h2>التعريب والترجمة</h2>
+    <p>يستخدم التطبيق نظام Flutter للتعريب والترجمة من خلال ملفات ARB:</p>
+    <ul>
+        <li><strong>app_ar.arb</strong>: ملف الترجمة العربية</li>
+        <li><strong>app_en.arb</strong>: ملف الترجمة الإنجليزية</li>
+        <li><strong>app_localizations.dart</strong>: ملف مولد تلقائيًا يحتوي على فئة AppLocalizations</li>
+    </ul>
+
+    <h2>بناء وتصدير التطبيق</h2>
+    <p>يمكن بناء التطبيق لمنصات مختلفة:</p>
+
+    <h3>Android</h3>
+    <pre><code>flutter build apk --release</code></pre>
+    <p>ينتج ملف APK واحد يعمل على جميع أنواع المعالجات.</p>
+
+    <pre><code>flutter build apk --release --split-per-abi</code></pre>
+    <p>ينتج ملفات APK منفصلة لكل نوع معالج (armeabi-v7a, arm64-v8a, x86_64).</p>
+
+    <h3>iOS</h3>
+    <pre><code>flutter build ios --release</code></pre>
+
+    <h3>الويب</h3>
+    <pre><code>flutter build web --release</code></pre>
+
+    <h2>الخاتمة</h2>
+    <p>تطبيق "Zakrni – ذكرني" هو تطبيق شامل للمسلمين يوفر أوقات الصلاة والأذكار اليومية بواجهة سهلة الاستخدام ودعم للغتين العربية والإنجليزية. يتميز التطبيق بتصميم جميل وميزات مفيدة مثل عدادات الأذكار وإمكانية تخصيص الإعدادات.</p>
+
+    <script>
+        window.onload = function() {
+            // إضافة زر للطباعة
+            var printButton = document.createElement('button');
+            printButton.innerHTML = 'حفظ كملف PDF';
+            printButton.style.position = 'fixed';
+            printButton.style.top = '10px';
+            printButton.style.right = '10px';
+            printButton.style.padding = '10px';
+            printButton.style.backgroundColor = '#3498db';
+            printButton.style.color = 'white';
+            printButton.style.border = 'none';
+            printButton.style.borderRadius = '5px';
+            printButton.style.cursor = 'pointer';
+            printButton.onclick = function() {
+                window.print();
+            };
+            document.body.appendChild(printButton);
+        };
+    </script>
+</body>
+</html>
